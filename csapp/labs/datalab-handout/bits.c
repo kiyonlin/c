@@ -150,15 +150,7 @@ int bitAnd(int x, int y) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-
-
-
-
-
-
-
-  return 2;
-
+  return x >> (n << 3) & (0xff);
 }
 /* 
  * logicalShift - shift x to the right by n, using a logical shift
@@ -169,7 +161,8 @@ int getByte(int x, int n) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+  int mask = (1 << 31) >> n << 1;
+  return x >> n ^ mask;
 }
 /*
  * bitCount - returns count of number of 1's in word
@@ -179,7 +172,74 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-  return 2;
+  // Mask 1 encompasses the 2 least significant bytes
+  int mask1 = 0x11 | (0x11 << 8);
+
+  // Mask 2 encompasses the final bytes
+  int mask2 = mask1 | (mask1 << 16);
+
+  // Sum will hold the number of 1 bits in the bit string
+  // Computes the number of 1 bits within the first four bits
+  int sum = x & mask2;
+  sum = sum + ((x >> 1) & mask2);
+  sum = sum + ((x >> 2) & mask2);
+  sum = sum + ((x >> 3) & mask2);
+
+  // At this point, sum represents the number of 1 bits within the first 4 bits.
+  // in addition to extraneous bits beyond the first four bits.
+  // As the binary position of these values do not represent their appropriate value in relation to the sum, they must be stripped.
+
+  // Adjusts for overestimated sum value due to addition of 1 bits beyond first four bits.
+  sum = sum + (sum >> 16);
+
+  // Used to preserve current sum, and continue to mask 1 bits in the next byte.
+  mask1 = 0xF | (0xF << 8);
+
+  // Alternates the preserved bits of sum and adds alternating 4 bits together.
+  sum = (sum & mask1) + ((sum >> 4) & mask1);
+
+  // Shift sum value 1 byte and implement mask to limit resulting sum to 6 bits
+  // Maximum representation of 6 bits, or a decimal value of 32, the word size for this problem set.
+  return((sum + (sum >> 8)) & 0x3F);
+
+/* Funny Solution
+  int mask = 0x01;
+  int sum = 0;
+
+  sum = sum + (x & mask);
+  sum = sum + (x >> 1 & mask);
+  sum = sum + (x >> 2 & mask);
+  sum = sum + (x >> 3 & mask);
+  sum = sum + (x >> 4 & mask);
+  sum = sum + (x >> 5 & mask);
+  sum = sum + (x >> 6 & mask);
+  sum = sum + (x >> 7 & mask);
+  sum = sum + (x >> 8 & mask);
+  sum = sum + (x >> 9 & mask);
+  sum = sum + (x >> 10 & mask);
+  sum = sum + (x >> 11 & mask);
+  sum = sum + (x >> 12 & mask);
+  sum = sum + (x >> 13 & mask);
+  sum = sum + (x >> 14 & mask);
+  sum = sum + (x >> 15 & mask);
+  sum = sum + (x >> 16 & mask);
+  sum = sum + (x >> 17 & mask);
+  sum = sum + (x >> 18 & mask);
+  sum = sum + (x >> 19 & mask);
+  sum = sum + (x >> 20 & mask);
+  sum = sum + (x >> 21 & mask);
+  sum = sum + (x >> 22 & mask);
+  sum = sum + (x >> 23 & mask);
+  sum = sum + (x >> 24 & mask);
+  sum = sum + (x >> 25 & mask);
+  sum = sum + (x >> 26 & mask);
+  sum = sum + (x >> 27 & mask);
+  sum = sum + (x >> 28 & mask);
+  sum = sum + (x >> 29 & mask);
+  sum = sum + (x >> 30 & mask);
+  sum = sum + (x >> 31 & mask);
+  return(sum);
+*/
 }
 /* 
  * bang - Compute !x without using !
@@ -189,7 +249,13 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 2;
+  // 计算每一位是否包含1
+  x = (x >> 16) | x;
+  x = (x >> 8) | x;
+  x = (x >> 4) | x;
+  x = (x >> 2) | x;
+  x = (x >> 1) | x;
+  return !(x & 1);
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -198,7 +264,7 @@ int bang(int x) {
  *   Rating: 1
  */
 int tmin(void) {
-  return 2;
+  return 1 << 31;
 }
 /* 
  * fitsBits - return 1 if x can be represented as an 
@@ -221,7 +287,7 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+    return (x >> n) + ((x >> 31) & 1);
 }
 /* 
  * negate - return -x 
@@ -231,7 +297,8 @@ int divpwr2(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  // 取反加一
+  return ~x + 1;
 }
 /* 
  * isPositive - return 1 if x > 0, return 0 otherwise 
@@ -241,7 +308,8 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-  return 2;
+  // 符号为正且不为0
+  return (!((x >> 31) & 1)) ^ (!x);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
