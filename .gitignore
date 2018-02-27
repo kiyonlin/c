@@ -9,3 +9,5 @@
 !.gitignore
 !/csapp/
 !/csapp/**/
+!/understanding/
+!/understanding/**/
