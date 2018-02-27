@@ -20,6 +20,9 @@ struct user_s {
     QUEUE node;
 };
 
+// 参考 
+// http://www.cnblogs.com/chenyangyao/p/libuv.html
+// https://www.jianshu.com/p/6373de1e117d
 int main() {
     struct user_s* user;
     struct instance_s* instance;
