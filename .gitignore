@@ -2,6 +2,7 @@
 *
 
 # 增加指定扩展名文件和Makefile文件
+!*.json
 !*.c
 !*.h
 !Makefile
@@ -15,3 +16,5 @@
 !/c-primer-plus/**/
 !/dsaac/
 !/dsaac/**/
+!/.vscode/
+!/.vscode/**/
