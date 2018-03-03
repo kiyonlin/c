@@ -20,7 +20,6 @@ int main()
             if (!QueueIsFull(&line)) {
                 printf("Putting %d into queue\n", item);
                 EnQueue(item, &line);
-                puts("dd");
             } else {
                 puts("Queue is full!");
             }
