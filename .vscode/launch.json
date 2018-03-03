@@ -12,7 +12,7 @@
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "gcc",
+            "preLaunchTask": "gcc compile",
             "environment": [],
             "externalConsole": false, //"console": "integratedTerminal",
             "osx": {
